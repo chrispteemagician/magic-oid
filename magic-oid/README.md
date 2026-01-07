@@ -1,6 +1,6 @@
-# 🎩 Magic-Oid - Your Magic Trick Identification Expert
+# 🎩 Magic-Oid - Your Magic Effect Identification Expert
 
-AI-powered magic trick and illusion identification tool built by a Magic Circle magician with 30+ years experience.
+AI-powered magic effect and illusion identification tool built by a Magic Circle magician with 30+ years experience.
 
 ## ⚠️ License & Commercial Use
 
@@ -25,10 +25,10 @@ AI-powered magic trick and illusion identification tool built by a Magic Circle 
 
 ## What It Does
 
-Upload a photo or screenshot of a magic trick, prop, or performance, and Magic-Oid will:
+Upload a photo or screenshot of a magic effect, prop, or performance, and Magic-Oid will:
 
 ### FREE Features (Forever)
-- **Identify the trick** - Name, type, and effect description
+- **Identify the effect** - Name, type, and effect description
 - **Assess skill level** - Beginner, Intermediate, Advanced, or Expert
 - **Technical overview** - References sleights and techniques by name (e.g., "uses a riffle force")
 - **Learning guidance** - Book recommendations and prerequisite skills
@@ -45,7 +45,7 @@ Upload a photo or screenshot of a magic trick, prop, or performance, and Magic-O
 - **Amazon links** - Direct purchase links to books and props
 - **Performance guidance** - Patter, timing, presentation angles
 - **Prerequisite skills** - What to master first with book references
-- **Related tricks** - Similar effects and variations to explore
+- **Related effects** - Similar effects and variations to explore
 - **Works on ALL -Oid apps** - Guitar-Oid, Radi-Oid, Miniature-Oid, etc.
 
 **Note**: Pro features use standard magic terminology and reference published magic books. As the saying goes, "If you want to hide a method, write it in a book" - magic books are educational resources for magicians, not exposure.
