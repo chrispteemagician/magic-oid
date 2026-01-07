@@ -1,0 +1,11 @@
+{
+  "name": "magic-oid",
+  "version": "1.0.0",
+  "description": "AI-powered magic trick identification tool",
+  "author": "Chris P Tee",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "type": "module",
+  "dependencies": {
+    "@vercel/node": "^3.0.0"
+  }
+}
