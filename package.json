@@ -1,11 +1,11 @@
 {
   "name": "magic-oid",
   "version": "1.0.0",
-  "description": "AI-powered magic trick identification tool",
+  "description": "AI-powered magic effect identification tool",
   "author": "Chris P Tee",
   "license": "SEE LICENSE IN LICENSE.txt",
-  "type": "module",
-  "dependencies": {
-    "@vercel/node": "^3.0.0"
+  "devDependencies": {
+    "@netlify/functions": "^2.0.0",
+    "netlify-cli": "^17.0.0"
   }
 }
