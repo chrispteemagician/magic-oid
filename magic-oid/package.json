@@ -1,0 +1,11 @@
+{
+  "name": "magic-oid",
+  "version": "1.0.0",
+  "description": "AI-powered magic trick identification tool",
+  "author": "Chris P Tee",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "devDependencies": {
+    "@netlify/functions": "^2.0.0",
+    "netlify-cli": "^17.0.0"
+  }
+}
