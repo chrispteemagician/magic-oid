@@ -221,3 +221,6 @@ For commercial licensing inquiries, contact via chrisptee.com
 ## Version
 
 1.0.0 - Initial release with FREE forever basic analysis and PRO method reveals
+
+
+<!-- Trigger deployment -->
