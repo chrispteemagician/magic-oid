@@ -4,8 +4,10 @@
   "description": "AI-powered magic effect identification tool",
   "author": "Chris P Tee",
   "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0"
+  },
   "devDependencies": {
-    "@netlify/functions": "^2.0.0",
-    "netlify-cli": "^17.0.0"
+    "@vercel/node": "^3.0.0"
   }
 }

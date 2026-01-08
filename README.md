@@ -54,7 +54,7 @@ Upload a photo or screenshot of a magic effect, prop, or performance, and Magic-
 
 - **Frontend**: React 18 (CDN, no build process)
 - **Backend**: Vercel serverless functions
-- **AI**: Google Gemini 2.0 Flash vision API
+- **AI**: Claude Sonnet 4 (Anthropic API)
 - **Storage**: localStorage (no database)
 - **Deployment**: Vercel (free tier)
 
@@ -94,13 +94,13 @@ Upload a photo or screenshot of a magic effect, prop, or performance, and Magic-
 
 ### Prerequisites
 - Vercel account (free)
-- Google Gemini API key (from https://makersuite.google.com/app/apikey)
+- Anthropic API key (from https://console.anthropic.com)
 
 ### Steps
 
 1. **Clone or download** this project (for personal/educational use only)
 
-2. **Install dependencies** (optional, for local testing):
+2. **Install dependencies**:
    ```bash
    npm install
    ```
@@ -112,7 +112,7 @@ Upload a photo or screenshot of a magic effect, prop, or performance, and Magic-
 
 4. **Add environment variable** in Vercel:
    - Go to Project Settings → Environment Variables
-   - Add: `GEMINI_API_KEY` = `your-gemini-api-key`
+   - Add: `ANTHROPIC_API_KEY` = `sk-ant-your-key-here`
 
 5. **Deploy**!
    - Vercel will auto-deploy
@@ -127,7 +127,7 @@ vercel dev
 
 Add `.env` file with your API key:
 ```
-GEMINI_API_KEY=your-gemini-api-key-here
+ANTHROPIC_API_KEY=sk-ant-your-key-here
 ```
 
 **Note:** Deployment for commercial purposes requires a separate license. Contact for commercial licensing.
@@ -186,9 +186,9 @@ We believe magic literature should be accessible to those who want to learn the 
 ## Cost Estimate
 
 - **Vercel**: FREE (100GB bandwidth, unlimited function executions)
-- **Gemini API**: FREE tier includes 1,500 requests/day (2.0 Flash)
-- **Expected**: £0/month with moderate traffic (stays in free tier)
-- **Shared across apps**: Use same API key for all -Oid apps
+- **Claude API**: ~$0.01-0.03 per analysis (pay as you go)
+- **Expected**: $5-15/month with moderate traffic
+- **Shared key**: Use same ANTHROPIC_API_KEY across all apps
 
 ## Built By
 

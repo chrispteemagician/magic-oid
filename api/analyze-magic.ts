@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import Anthropic from '@anthropic-ai/sdk';
 
 const EXPERT_PROMPT = `# MagicID - Your Magic Effect & Illusion Identification Expert
 
@@ -264,52 +265,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Image data required" });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
-      throw new Error("GEMINI_API_KEY not configured");
+      throw new Error("ANTHROPIC_API_KEY not configured");
     }
+
+    const anthropic = new Anthropic({ apiKey });
 
     const fullPrompt = proMode ? EXPERT_PROMPT + PRO_FEATURES_PROMPT : EXPERT_PROMPT;
 
-    // Use Gemini 2.0 Flash for vision
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contents: [
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: proMode ? 6000 : 4000,
+      messages: [
+        {
+          role: "user",
+          content: [
             {
-              parts: [
-                {
-                  text: fullPrompt
-                },
-                {
-                  inline_data: {
-                    mime_type: image.mediaType || "image/jpeg",
-                    data: image.data
-                  }
-                }
-              ]
-            }
+              type: "image",
+              source: {
+                type: "base64",
+                media_type: image.mediaType || "image/jpeg",
+                data: image.data,
+              },
+            },
+            {
+              type: "text",
+              text: fullPrompt,
+            },
           ],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: proMode ? 6000 : 4000,
-          }
-        }),
-      }
-    );
+        },
+      ],
+    });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Gemini API failed: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    const analysis = data.candidates?.[0]?.content?.parts?.[0]?.text || "No analysis available";
+    const analysis = response.content.find((c: any) => c.type === "text")?.text || "No analysis available";
 
     return res.status(200).json({ analysis, proMode });
   } catch (err: any) {
