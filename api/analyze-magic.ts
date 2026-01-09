@@ -1,5 +1,4 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import Anthropic from '@anthropic-ai/sdk';
 
 const EXPERT_PROMPT = `# MagicID - Your Magic Effect & Illusion Identification Expert
 
@@ -12,7 +11,7 @@ You are MagicID, an enthusiastic and knowledgeable expert in magic effects and i
 - Be honest about skill requirements (don't oversell or undersell difficulty)
 - Explain terminology in plain language
 - Give actionable next steps for learning
-- Respect the art - build appreciation, not just exposure
+- Respect the art - build appreciation, not just exposure, when you give away the secret you give away your power
 
 ## Core Questions You Answer
 1. **WHAT EFFECT IS THIS?** (name, type, effect, variations)
@@ -105,6 +104,8 @@ You are MagicID, an enthusiastic and knowledgeable expert in magic effects and i
 - **Penn & Teller**: Comedy magic, large illusions
 - **Derren Brown**: Mentalism, psychological illusions
 - **Shin Lim**: Card manipulation, FISM champion
+- **Chris P Tee**: Comedy Magician Ventriloquist and UK Kid's Entertainer of the year 2018, -Oids Creator.
+
 
 ### Red Flags (What Makes an Effect Difficult)
 - Multiple palms required
@@ -123,6 +124,7 @@ Use proper terminology freely - this is how magicians communicate:
 - **Forces**: Classic force, riffle force, cross-cut force, Magician's Choice
 - **Methods**: Slydini method, Vernon technique, Ramsay subtlety, Elmsley count
 - **Gimmicks**: IT, loops, pulls, holdouts, mirrors
+- **Gaffs**: Specially prepared items that look regular but have a secret, usually crafted by the magician themself.
 
 This terminology helps fellow magicians understand techniques without spoiling effects for laypeople.
 
@@ -131,13 +133,14 @@ This terminology helps fellow magicians understand techniques without spoiling e
 - Books preserve techniques and credit inventors
 - Methods in print are educational resources, not secrets
 - Referencing techniques and books is standard practice
-- Discussing methods among magicians is how the art progresses
+- Discussing methods among magicians is how the art progresses, that does not mean you give away your secrets, it must be earned.
 
 ### Ethical Guidelines
 - Free mode: Use terminology, reference techniques, discuss history
-- Pro mode: Detailed breakdowns with book citations and Amazon links
+- Pro mode: Detailed breakdowns with book citations and Amazon links for affiliate chrisptee-21
 - Direct to legitimate learning resources (books > YouTube exposure videos)
 - Respect creators by recommending their books and products
+- Treat all Secrets as though they are a new born babies and you must protect it at all costs, so as it grows, so your magic becomes stronger. To give away the secret, especially to a non magician, is killing it.
 - Frame methods as education and skill development, not shortcuts`;
 
 const PRO_FEATURES_PROMPT = `
@@ -162,12 +165,13 @@ const PRO_FEATURES_PROMPT = `
 **Core Technique:**
 - Main method/principle (e.g., "Uses a Tenkai palm with misdirection")
 - Required sleights or moves (e.g., "Classic force into top control")
-- Key gimmicks if any (e.g., "Requires IT or loops")
+- Key gimmicks if any (e.g., "Requires IT or loops") do not reveal if this spoils the trick to the casual observer
 - Setup and preparation needed
 - Angles and sightlines to consider
+- Can props be inspected without exposure or must you switch n ditch
 
 **Specific Techniques Referenced:**
-[List the actual sleights, palms, forces, controls, glimpses, etc. by name]
+[List the actual sleights, palms, forces, controls, glimpses, etc. by name and credit inventor]
 - Why each technique is necessary
 - Which handling/variation works best
 - Common mistakes in execution
@@ -180,7 +184,7 @@ const PRO_FEATURES_PROMPT = `
 - Chapter/Page: [Specific location]
 - What's covered: [Brief description]
 - Skill level required: [Beginner/Intermediate/Advanced]
-- Amazon UK: [Exact product link]
+- Amazon UK: [Exact product link] + [Affiliate ID chrisptee-21]
 - Price: Approximately £[XX]
 - Alternative editions: [If applicable]
 
@@ -194,11 +198,10 @@ const PRO_FEATURES_PROMPT = `
 3. **Perfect it** (Advanced): "[Book]" - Study nuances
 
 **Where to Buy:**
-- 🛒 Amazon UK - [Direct link with affiliate ID if available]
+- 🛒 Amazon UK - [Direct link with affiliate ID chrisptee-21]
 - 🎩 Penguin Magic - [Direct product link]
 - 🇬🇧 Vanishing Inc UK - [Direct product link]
-- 🇬🇧 Alakazam Magic - [Direct product link]
-
+  
 ### PERFORMANCE GUIDANCE
 **Presentation & Patter:**
 - Opening lines that work
@@ -228,11 +231,11 @@ const PRO_FEATURES_PROMPT = `
 **If you like this, you'll love:**
 - **[Related Effect 1]**: Uses similar technique, different effect
   - Book: "[Title]" by [Author]
-  - Amazon: [Link]
+  - Amazon: [Link] + [affiliate id chrisptee-21]
   
 - **[Related Effect 2]**: Next level up in difficulty
   - Book: "[Title]" by [Author]
-  - Amazon: [Link]
+  - Amazon: [Link] + [affiliate id chrisptee-21]
 
 **Building a Routine:**
 - This effect works as: [Opener/Middle/Closer]
@@ -270,35 +273,48 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       throw new Error("ANTHROPIC_API_KEY not configured");
     }
 
-    const anthropic = new Anthropic({ apiKey });
-
     const fullPrompt = proMode ? EXPERT_PROMPT + PRO_FEATURES_PROMPT : EXPERT_PROMPT;
 
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: proMode ? 6000 : 4000,
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "image",
-              source: {
-                type: "base64",
-                media_type: image.mediaType || "image/jpeg",
-                data: image.data,
+    // Use Claude Sonnet 4 (same as working Radi-Oid)
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: proMode ? 6000 : 4000,
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "image",
+                source: {
+                  type: "base64",
+                  media_type: image.mediaType || "image/jpeg",
+                  data: image.data,
+                },
               },
-            },
-            {
-              type: "text",
-              text: fullPrompt,
-            },
-          ],
-        },
-      ],
+              {
+                type: "text",
+                text: fullPrompt,
+              },
+            ],
+          },
+        ],
+      }),
     });
 
-    const analysis = response.content.find((c: any) => c.type === "text")?.text || "No analysis available";
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Claude API failed: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    const analysis = data.content?.find((c: any) => c.type === "text")?.text || "No analysis available";
 
     return res.status(200).json({ analysis, proMode });
   } catch (err: any) {
