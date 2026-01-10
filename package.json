@@ -1,9 +1,14 @@
 {
   "name": "magic-oid",
-  "version": "1.0.0",
-  "description": "AI-powered magic effect identification tool",
+  "version": "2.0.0",
+  "description": "AI-powered magic effect identification and roasting tool",
   "author": "Chris P Tee",
   "license": "SEE LICENSE IN LICENSE.txt",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site - no build needed'",
+    "deploy": "vercel --prod"
+  },
   "dependencies": {
     "stripe": "^14.0.0",
     "qrcode": "^1.5.3"
