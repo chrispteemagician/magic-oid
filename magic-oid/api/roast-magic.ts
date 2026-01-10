@@ -90,51 +90,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Image data required" });
     }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      throw new Error("ANTHROPIC_API_KEY not configured");
+      throw new Error("GEMINI_API_KEY not configured");
     }
 
-    // Use Claude Sonnet 4
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "image",
-                source: {
-                  type: "base64",
-                  media_type: image.mediaType || "image/jpeg",
-                  data: image.data,
+    // Use Gemini Flash 2.0
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  inline_data: {
+                    mime_type: image.mediaType || "image/jpeg",
+                    data: image.data
+                  }
                 },
-              },
-              {
-                type: "text",
-                text: ROAST_PROMPT,
-              },
-            ],
-          },
-        ],
-      }),
-    });
+                { text: ROAST_PROMPT }
+              ]
+            }
+          ],
+          generationConfig: {
+            maxOutputTokens: 800,
+            temperature: 0.9
+          }
+        })
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Claude API failed: ${response.status} - ${errorText}`);
+      throw new Error(`Gemini API failed: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    const roast = data.content?.find((c: any) => c.type === "text")?.text || "Roasting failed, mate!";
+    const roast = data.candidates?.[0]?.content?.parts?.[0]?.text || "Roasting failed, mate!";
 
     return res.status(200).json({ roast });
   } catch (err: any) {

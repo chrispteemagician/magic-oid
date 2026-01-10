@@ -1,223 +1,361 @@
-# 🎩 Magic-Oid - Your Magic Effect Identification Expert
+# 🎩 Magic-Oid v2.0 - Complete Package
 
-AI-powered magic effect and illusion identification tool built by a Magic Circle magician with 30+ years experience.
+**AI-Powered Magic Effect Identification + ROAST-OID**
 
-## ⚠️ License & Commercial Use
-
-**This software is proprietary and protected by copyright.**
-
-✅ **What you CAN do:**
-- View the code to learn and study the architecture
-- Deploy for personal or educational use (non-commercial)
-- Reference this work with proper attribution
-
-❌ **What you CANNOT do:**
-- Create competing identification apps using this code
-- Use the expert prompts or knowledge bases commercially
-- Remove copyright notices or attribution
-- Deploy as a commercial service without licensing
-
-📧 **For commercial licensing inquiries:** Contact via chrisptee.com
-
-**See [LICENSE.txt](LICENSE.txt) for full terms.**
+Built by **Chris P Tee** - Magic Circle Magician - UK Children's Entertainer of the Year 2018
 
 ---
 
-## What It Does
+## ✨ What's Included:
 
-Upload a photo or screenshot of a magic effect, prop, or performance, and Magic-Oid will:
+✅ **Magic Effect Identification** - Upload tricks, get detailed analysis
+✅ **ROAST-OID** - Roast magicians with British pub banter
+✅ **Dealer Program** - £97/£174/£295 tiered pricing + Stripe checkout
+✅ **Rogue's Gallery** - Save and view all roasts
+✅ **Camera + Gallery Buttons** - Mobile-friendly photo uploads
+✅ **QR Code Generation** - Auto-generated for dealer referrals
+✅ **Pro Mode** - Book references, Amazon affiliate links
 
-### FREE Features (Forever)
-- **Identify the effect** - Name, type, and effect description
-- **Assess skill level** - Beginner, Intermediate, Advanced, or Expert
-- **Technical overview** - References sleights and techniques by name (e.g., "uses a riffle force")
-- **Learning guidance** - Book recommendations and prerequisite skills
-- **Historical context** - Who performed it famously, when it was created
-- **Performance tips** - Venue suitability and presentation ideas
-- **Unlimited analyses** - No limits, no trials, genuinely free
+---
 
-**Note**: Uses standard magic terminology (palms, forces, controls, glimpses) - this is how magicians communicate and find resources.
+## 🚀 Quick Deploy (5 Minutes):
 
-### PRO Features (£4.95/month Early Adopter)
-- **Historical context & origins** - Who created it, when, why it matters
-- **Technical breakdown** - Using proper magic terminology (Tenkai palm, riffle force, Elmsley count, glimpse, etc.)
-- **Book references** - Specific chapters and pages in magic literature
-- **Amazon links** - Direct purchase links to books and props
-- **Performance guidance** - Patter, timing, presentation angles
-- **Prerequisite skills** - What to master first with book references
-- **Related effects** - Similar effects and variations to explore
-- **Works on ALL -Oid apps** - Guitar-Oid, Radi-Oid, Miniature-Oid, etc.
+### 1. Upload to GitHub
 
-**Note**: Pro features use standard magic terminology and reference published magic books. As the saying goes, "If you want to hide a method, write it in a book" - magic books are educational resources for magicians, not exposure.
+Create new repo or update existing:
+```bash
+git init
+git add .
+git commit -m "Magic-Oid v2.0 with ROAST-OID"
+git remote add origin https://github.com/YOUR_USERNAME/magic-oid.git
+git push -u origin main
+```
 
-## Tech Stack
+### 2. Deploy to Vercel
 
-- **Frontend**: React 18 (CDN, no build process)
-- **Backend**: Vercel serverless functions
-- **AI**: Google Gemini 2.0 Flash vision API
-- **Storage**: localStorage (no database)
-- **Deployment**: Vercel (free tier)
+1. Go to https://vercel.com
+2. Click **"New Project"**
+3. Import your GitHub repo
+4. Vercel auto-detects settings
+5. Click **"Deploy"**
 
-## Knowledge Base Highlights
+Done! Site live in 2 minutes.
 
-### Categories Covered
-- Card Magic (forces, controls, flourishes, packet tricks)
-- Coin Magic (palming, vanishes, productions, penetrations)
-- Mentalism (mind reading, predictions, psychological principles)
-- Close-Up, Parlor, and Stage Magic
-- Classic Props (Svengali Deck, Thumb Tip, IT, Shell Coins)
+---
 
-### Classic Effects Known
-- Ambitious Card
-- Cups & Balls
-- Ring & String
-- Torn & Restored
-- Levitation
-- Productions
-- Card to Wallet
-- Linking Rings
-- French Drop
-- Invisible Deck
-- And hundreds more!
+## 🔑 Environment Variables (REQUIRED):
 
-### Book References
-- "Royal Road to Card Magic" by Hugard & Braue
-- "Mark Wilson's Complete Course in Magic"
-- "Card College" series by Giobbi
-- "Expert at the Card Table" by S.W. Erdnase
-- "Modern Coin Magic" by J.B. Bobo
-- "Tarbell Course in Magic" (8 volumes)
-- "Expert Card Technique" by Hugard & Braue
-- "Dai Vernon's Revelations"
+Go to Vercel → Project Settings → Environment Variables
 
-## Deployment Instructions
+### Essential:
+```bash
+GEMINI_API_KEY=AIzaSyXXXXXXXXXXXXXXXXXXXXX
+STRIPE_SECRET_KEY=sk_test_XXXXXXXXXX
+STRIPE_DEALER_PRICE_ID=price_XXXXXXXXXX
+NEXT_PUBLIC_BASE_URL=https://your-site.vercel.app
+```
 
-### Prerequisites
-- Vercel account (free)
-- Google Gemini API key (from https://makersuite.google.com/app/apikey)
+### Get Your Keys:
 
-### Steps
+**Gemini API Key** (FREE - You have credits!):
+1. Go to: https://makersuite.google.com/app/apikey
+2. Create new API key
+3. Copy and paste into Vercel
 
-1. **Clone or download** this project (for personal/educational use only)
+**Stripe Keys** (Already have these):
+- Test mode: `sk_test_...`
+- Live mode: `sk_live_...`
 
-2. **Install dependencies** (optional, for local testing):
-   ```bash
-   npm install
-   ```
+---
 
-3. **Set up Vercel**:
-   - Push to GitHub or deploy directly
-   - Connect to Vercel
-   - Import your repository
+## 📦 Dependencies:
 
-4. **Add environment variable** in Vercel:
-   - Go to Project Settings → Environment Variables
-   - Add: `GEMINI_API_KEY` = `your-gemini-api-key`
+Already in `package.json`:
+```json
+{
+  "dependencies": {
+    "stripe": "^14.0.0",
+    "qrcode": "^1.5.3"
+  }
+}
+```
 
-5. **Deploy**!
-   - Vercel will auto-deploy
-   - Your site will be live at `https://[your-project].vercel.app`
-
-### Local Testing (Optional)
-
+Install locally (if testing):
 ```bash
 npm install
-vercel dev
 ```
 
-Add `.env` file with your API key:
+Vercel installs automatically on deploy.
+
+---
+
+## 🗂️ File Structure:
+
 ```
-GEMINI_API_KEY=your-gemini-api-key-here
+magic-oid/
+├── api/
+│   ├── analyze-magic.ts          # Effect identification (Gemini)
+│   ├── roast-magic.ts             # ROAST-OID (Gemini)
+│   ├── dealers-create-checkout.ts # Stripe checkout
+│   └── dealers-process-signup.ts  # QR generation
+├── index.html                     # Main app (with ROAST mode)
+├── dealers.html                   # Dealer signup page
+├── dealers-success.html           # Post-payment success
+├── package.json                   # Dependencies
+├── vercel.json                    # Config
+├── .env.example                   # Example env vars
+└── README.md                      # This file
 ```
 
-**Note:** Deployment for commercial purposes requires a separate license. Contact for commercial licensing.
+---
 
-## Part of the -Oid Family
+## 🧪 Testing:
 
-Magic-Oid is part of the "-Oid" ecosystem of AI-powered identification tools:
+### Test Magic Identification:
+1. Go to your site
+2. Upload photo of magic trick
+3. Wait 15-20 seconds
+4. Get detailed analysis
 
-- 📻 **Radi-Oid** - CB & ham radio identification
-- 🎸 **Guit-Oid** - Vintage guitar authentication
-- 🏠 **Miniature-Oid** - Dollhouse miniature identification
-- 💿 **Vinyl-Oid** - Record pressing identification
-- 🪙 **Coin-Oid** - Coin identification & grading
-- 👗 **Designer-Oid** - Fashion authentication
-- ⌚ **Watch-Oid** - Vintage watch identification
+### Test ROAST-OID:
+1. Click **🔥 ROAST-OID** button
+2. Upload photo of magician
+3. Get British pub-banter roast
+4. View **🎭 Rogue's Gallery**
 
-**Cross-App Pro Access**: One subscription works across ALL -Oid apps!
+### Test Dealer Signup:
+1. Go to `/dealers`
+2. Fill out form
+3. Use Stripe test card: `4242 4242 4242 4242`
+4. Should redirect to success page
+5. See QR code and referral link
 
-## How Magic-Oid Respects the Art
+---
 
-Magic-Oid follows the magic community's actual practices:
+## 💾 Optional: Supabase Database Setup
 
-**Using Proper Terminology**
-- References techniques by name (Tenkai palm, riffle force, Elmsley count, etc.)
-- This is standard practice among magicians - it's how we communicate
-- Laypeople won't understand the terminology anyway
-- Helps magicians find the right learning resources
+**You DON'T need this to launch** - the app works without it.
 
-**"If you want to hide a method, write it in a book"**
-- Famous magic saying - books are for magicians, not exposure
-- Methods in published magic books are educational resources
-- Discussing techniques among magicians is how the art progresses
-- All Pro content references legitimate published works
+Dealers are currently just logged to console. To save them permanently:
 
-**Educational, Not Exposure**
-- Free mode: Uses terminology, discusses history, gives learning path
-- Pro mode: Detailed breakdowns with book citations and purchase links
-- Directs to legitimate sources (books, magic shops, dealers)
-- Respects creators by recommending their published works
-- Supports the magic economy (book sales, dealer sales)
+### Step 1: Create Supabase Project
 
-**For Serious Learners**
-- Pro features are for magicians developing their craft
-- Honor system: By subscribing, you confirm you're learning to perform
-- Not for exposing tricks to laypeople
-- Build skills properly through study and practice
+1. Go to https://supabase.com
+2. Create new project (FREE tier works)
+3. Wait 2 minutes for setup
 
-We believe magic literature should be accessible to those who want to learn the art properly. That's different from YouTube exposure videos that spoil tricks for clicks.
+### Step 2: Create Database Table
 
-## Support Links
+Go to SQL Editor, run this:
 
-- **Buy Me a Coffee**: https://buymeacoffee.com/chrispteemagician
-- **FeelFamous Kudos**: https://feelfamous.co.uk
-- **Ko-fi**: https://ko-fi.com/zoom
+```sql
+create table dealers (
+  id uuid default gen_random_uuid() primary key,
+  dealer_name text not null,
+  contact_name text not null,
+  email text not null unique,
+  phone text,
+  website text not null,
+  description text not null,
+  city text not null,
+  country text not null,
+  socials text,
+  payout_method text not null,
+  
+  -- Referral & QR
+  referral_code text not null unique,
+  referral_url text not null,
+  qr_image_data_url text not null,
+  
+  -- Stripe
+  stripe_customer_id text,
+  stripe_subscription_id text,
+  
+  -- Status
+  kudos integer default 0,
+  status text default 'active',
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
 
-## Cost Estimate
+-- Enable RLS (Row Level Security)
+alter table dealers enable row level security;
 
-- **Vercel**: FREE (100GB bandwidth, unlimited function executions)
-- **Gemini API**: FREE tier includes 1,500 requests/day (2.0 Flash)
-- **Expected**: £0/month with moderate traffic (stays in free tier)
-- **Shared across apps**: Use same API key for all -Oid apps
+-- Allow reading dealers (for dealer pages)
+create policy "Dealers are viewable by everyone"
+  on dealers for select
+  using (true);
 
-## Built By
+-- Index for fast referral code lookups
+create index idx_dealers_referral_code on dealers(referral_code);
+```
 
-**Chris P Tee**
-- Magic Circle Magician
-- UK Children's Entertainer of the Year 2018
-- 30+ years performing experience
-- Specializes in comedy magic, Punch & Judy, and corporate training
+### Step 3: Add Environment Variables
 
-## Philosophy
+In Vercel, add:
+```bash
+SUPABASE_URL=https://xxxxx.supabase.co
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... (secret!)
+```
 
-"I got you" energy:
-- **Clear structure** - No cognitive overwhelm
-- **Honest assessment** - Real skill requirements, not gatekeeping
-- **Actionable info** - What to do next
-- **No waffle** - Get to the point
-- **Encouraging** - Every magician started somewhere
-- **Respect the art** - Learn properly, perform with pride
+Get these from: Supabase → Project Settings → API
 
-Built for neurodivergent-friendly experience: structured, predictable, helpful.
+### Step 4: Update `dealers-process-signup.ts`
 
-## License
+Add this at the top:
+```typescript
+import { createClient } from '@supabase/supabase-js';
+```
 
-Proprietary - All Rights Reserved
+Replace the `// TODO: Save to database` section:
+```typescript
+// Initialize Supabase
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-See [LICENSE.txt](LICENSE.txt) for full terms.
+// Save dealer to database
+const { data: dealer, error } = await supabase
+  .from('dealers')
+  .insert([dealerData])
+  .select()
+  .single();
 
-For commercial licensing inquiries, contact via chrisptee.com
+if (error) {
+  throw new Error('Failed to save dealer: ' + error.message);
+}
+```
 
-## Version
+Install Supabase package:
+```bash
+npm install @supabase/supabase-js
+```
 
-1.0.0 - Initial release with FREE forever basic analysis and PRO method reveals
+Push to GitHub, Vercel redeploys automatically.
+
+### Step 5: Create Dealer Pages (Optional)
+
+Create `dealers/[referralCode]/page.tsx` for dynamic dealer pages:
+```typescript
+export default async function DealerPage({ params }) {
+  const { referralCode } = params;
+  
+  // Fetch dealer from Supabase
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!
+  );
+  
+  const { data: dealer } = await supabase
+    .from('dealers')
+    .select('*')
+    .eq('referral_code', referralCode)
+    .single();
+  
+  if (!dealer) return <div>Dealer not found</div>;
+  
+  return (
+    <div>
+      <h1>{dealer.dealer_name}</h1>
+      <p>{dealer.description}</p>
+      <a href={dealer.website}>Visit Website</a>
+      <p>Kudos: {dealer.kudos}</p>
+    </div>
+  );
+}
+```
+
+---
+
+## 🔧 Troubleshooting:
+
+### Build Fails:
+- Check you deleted old `api/dealers/` Next.js routes
+- Make sure `package.json` has stripe + qrcode
+- Verify no TypeScript errors
+
+### API Errors:
+- Check `GEMINI_API_KEY` is set in Vercel
+- Test key works: https://makersuite.google.com/app/apikey
+- Check browser console for errors
+
+### Stripe Checkout Fails:
+- Verify `STRIPE_SECRET_KEY` is test key (starts with `sk_test_`)
+- Check `STRIPE_DEALER_PRICE_ID` matches Stripe dashboard
+- Make sure `NEXT_PUBLIC_BASE_URL` is correct
+
+### Images Not Uploading:
+- Check file size under 5MB
+- Verify JPG/PNG/WebP format
+- Test on mobile vs desktop
+
+---
+
+## 🎯 Launch Checklist:
+
+Before Blackpool (Feb 19-22, 2026):
+
+- [ ] Deploy to Vercel
+- [ ] Test Magic Identification
+- [ ] Test ROAST-OID
+- [ ] Test dealer signup with test card
+- [ ] Switch to Stripe LIVE keys
+- [ ] Update `NEXT_PUBLIC_BASE_URL` to real domain
+- [ ] Print QR codes for first 10 dealers
+- [ ] Create Instagram story template
+- [ ] Set up email welcome sequence (optional)
+- [ ] Add Google Analytics (optional)
+- [ ] Test on iPhone + Android
+
+---
+
+## 📊 Pricing Strategy:
+
+**Tier 1**: £97/year FOREVER - First 50 dealers (ends Jan 31)
+**Tier 2**: £174/year FOREVER - Next 50 dealers (Feb only)
+**Tier 3**: £295/year OR £49.95/month - Regular pricing
+
+**Revenue Targets**:
+- 50 x £97 = £4,850 (Tier 1)
+- 50 x £174 = £8,700 (Tier 2)
+- 100 x £295 = £29,500 (Regular)
+**Total Year 1**: £43,050
+
+---
+
+## 🌍 World Domination Plan:
+
+This same codebase works for ALL -Oid apps:
+- **Magic-Oid** (this one)
+- **Guitar-Oid** (vintage guitars)
+- **Radi-Oid** (CB radios)
+- **Cannabin-Oid** (420 community)
+- **Watch-Oid** (vintage watches)
+- **Coin-Oid** (numismatics)
+
+Just change:
+1. Expert prompts
+2. Branding colors
+3. Domain name
+
+**Copy/paste empire!** 🚀
+
+---
+
+## 📞 Support:
+
+Built by Chris P Tee
+- Website: https://comedymagic.co.uk
+- Kudos: https://feelfamous.co.uk
+- Email: hello@comedymagic.co.uk
+
+---
+
+## 📄 License:
+
+See LICENSE.txt
+
+---
+
+**GO FORTH AND DOMINATE THE WORLD THROUGH KINDNESS!** 🎩💚
