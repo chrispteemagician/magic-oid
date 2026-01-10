@@ -8,4 +8,11 @@
     "@netlify/functions": "^2.0.0",
     "netlify-cli": "^17.0.0"
   }
+  "dependencies": {
+    "stripe": "^14.0.0",
+    "qrcode": "^1.5.3"
+  },
+  "devDependencies": {
+    "@vercel/node": "^3.0.0"
+  }
 }

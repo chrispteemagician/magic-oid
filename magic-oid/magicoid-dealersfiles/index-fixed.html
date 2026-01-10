@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magic-Oid 🎩 - Your Magic Effect Identification Expert</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .gradient-purple {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #9b4dca 100%);
+    }
+    .gradient-purple-light {
+      background: linear-gradient(135deg, #a78bfa 0%, #c084fc 50%, #e879f9 100%);
+    }
+    
+    /* Loading animation */
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+    .pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    /* Markdown styling */
+    .markdown-content h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      color: #1f2937;
+    }
+    .markdown-content h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+    .markdown-content p {
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+    .markdown-content ul, .markdown-content ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .markdown-content li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+    .markdown-content strong {
+      font-weight: 700;
+      color: #1f2937;
+    }
+    .markdown-content em {
+      font-style: italic;
+    }
+    .markdown-content code {
+      background: #f3f4f6;
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.25rem;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-purple-900 via-indigo-900 to-purple-800 min-h-screen">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function MagicOid() {
+      const [imageFile, setImageFile] = useState(null);
+      const [imagePreview, setImagePreview] = useState(null);
+      const [result, setResult] = useState(null);
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState(null);
+      const [isPro, setIsPro] = useState(false);
+      const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+      const [loadingProgress, setLoadingProgress] = useState(0);
+
+      useEffect(() => {
+        // Check for Pro status
+        const subscription = localStorage.getItem('oid_subscription');
+        const trialActive = localStorage.getItem('oid_pro_trial');
+        const trialCount = parseInt(localStorage.getItem('oid_pro_trial_count') || '0');
+        
+        if (subscription) {
+          const subData = JSON.parse(subscription);
+          setIsPro(subData.active);
+        } else if (trialActive === 'true' && trialCount > 0) {
+          setIsPro(true);
+        }
+
+        // Check for Stripe redirect
+        const params = new URLSearchParams(window.location.search);
+        const proParam = params.get('pro');
+        if (proParam) {
+          localStorage.setItem('oid_subscription', JSON.stringify({
+            tier: proParam,
+            active: true,
+            timestamp: Date.now()
+          }));
+          setIsPro(true);
+          window.history.replaceState({}, '', window.location.pathname);
+        }
+      }, []);
+
+      // Simulate loading progress for better UX
+      useEffect(() => {
+        let interval;
+        if (loading) {
+          setLoadingProgress(0);
+          interval = setInterval(() => {
+            setLoadingProgress(prev => {
+              if (prev >= 90) return prev; // Stop at 90% until real completion
+              return prev + Math.random() * 10;
+            });
+          }, 500);
+        } else {
+          setLoadingProgress(0);
+        }
+        return () => clearInterval(interval);
+      }, [loading]);
+
+      const handleImageSelect = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          if (file.size > 5 * 1024 * 1024) {
+            setError("Image too large! Please use an image under 5MB.");
+            return;
+          }
+          setImageFile(file);
+          setError(null);
+          setResult(null);
+          
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setImagePreview(reader.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+
+      const analyzeImage = async (useProMode = false) => {
+        if (!imageFile) {
+          setError("Please select an image first");
+          return;
+        }
+
+        // Check if trying to use Pro without access
+        if (useProMode && !isPro) {
+          setShowUpgradeModal(true);
+          return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+        try {
+          const reader = new FileReader();
+          reader.onloadend = async () => {
+            const base64Data = reader.result.split(',')[1];
+            const mediaType = imageFile.type;
+
+            const response = await fetch('/api/analyze-magic', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                image: {
+                  data: base64Data,
+                  mediaType: mediaType
+                },
+                proMode: useProMode
+              }),
+            });
+
+            if (!response.ok) {
+              throw new Error(`Analysis failed: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setLoadingProgress(100);
+            setResult(data);
+            setLoading(false);
+
+            // Handle Pro trial credits
+            if (useProMode && isPro) {
+              const trialActive = localStorage.getItem('oid_pro_trial');
+              const subscription = localStorage.getItem('oid_subscription');
+              
+              if (trialActive === 'true' && !subscription) {
+                const trialCount = parseInt(localStorage.getItem('oid_pro_trial_count') || '0');
+                if (trialCount > 0) {
+                  const newCount = trialCount - 1;
+                  localStorage.setItem('oid_pro_trial_count', newCount.toString());
+                  if (newCount === 0) {
+                    setIsPro(false);
+                    localStorage.removeItem('oid_pro_trial');
+                    alert('✨ Free Pro credit used! Share your results to earn more, or subscribe for unlimited!');
+                  }
+                }
+              }
+            }
+          };
+          reader.readAsDataURL(imageFile);
+        } catch (err) {
+          setError(err.message || "Failed to analyze effect. Please try again.");
+          setLoading(false);
+        }
+      };
+
+      const unlockProForShare = () => {
+        localStorage.setItem('oid_pro_trial', 'true');
+        localStorage.setItem('oid_pro_trial_count', '1');
+        setIsPro(true);
+        setShowUpgradeModal(false);
+        alert('🎉 Pro activated! Create a Pro analysis, then share it to earn more credits!');
+      };
+
+      const generateShareImage = async () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 1080;
+        canvas.height = 1080;
+        const ctx = canvas.getContext('2d');
+
+        // Background gradient
+        const gradient = ctx.createLinearGradient(0, 0, 1080, 1080);
+        gradient.addColorStop(0, '#667eea');
+        gradient.addColorStop(0.5, '#764ba2');
+        gradient.addColorStop(1, '#9b4dca');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 1080, 1080);
+
+        // App Name/Logo (top)
+        ctx.font = 'bold 48px Arial';
+        ctx.fillStyle = 'white';
+        ctx.textAlign = 'center';
+        ctx.fillText('🎩 Magic-Oid', 540, 80);
+
+        // User's Image (center)
+        if (imagePreview) {
+          const img = new Image();
+          img.src = imagePreview;
+          await new Promise(resolve => {
+            img.onload = () => {
+              const size = 600;
+              const x = (1080 - size) / 2;
+              const y = 150;
+              ctx.drawImage(img, x, y, size, size);
+              resolve();
+            };
+          });
+        }
+
+        // Identification text
+        ctx.font = 'bold 32px Arial';
+        ctx.fillStyle = 'white';
+        ctx.fillText('Identified with Magic-Oid!', 540, 820);
+
+        // Call to action
+        ctx.font = '24px Arial';
+        ctx.fillText('Try it yourself at magicoid.vercel.app', 540, 870);
+
+        // Download
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'magic-oid-identification.png';
+          a.click();
+        });
+
+        // VIRAL REWARD: Give credit back after sharing!
+        const trialCount = parseInt(localStorage.getItem('oid_pro_trial_count') || '0');
+        const subscription = localStorage.getItem('oid_subscription');
+        
+        if (!subscription) {
+          const newCount = trialCount + 1;
+          localStorage.setItem('oid_pro_trial', 'true');
+          localStorage.setItem('oid_pro_trial_count', newCount.toString());
+          setIsPro(true);
+          alert(`🎉 Thanks for sharing! You earned 1 Pro credit! (${newCount} total)`);
+        }
+      };
+
+      return (
+        <div className="min-h-screen p-4">
+          <div className="max-w-3xl mx-auto">
+            
+            {/* Header */}
+            <div className="text-center mb-8 pt-8">
+              <h1 className="text-5xl font-black text-white mb-3 drop-shadow-lg">
+                🎩 Magic-Oid
+              </h1>
+              <p className="text-xl text-purple-200 mb-4">
+                Your Magic Effect Identification Expert
+              </p>
+              <div className="flex gap-3 justify-center flex-wrap text-sm">
+                <a href="https://buymeacoffee.com/chrispteemagician" target="_blank" rel="noopener" 
+                   className="bg-yellow-500 hover:bg-yellow-600 text-yellow-900 font-semibold py-2 px-4 rounded-lg transition">
+                  ☕ Buy Me a Coffee
+                </a>
+                <a href="https://feelfamous.co.uk" target="_blank" rel="noopener"
+                   className="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 px-4 rounded-lg transition">
+                  ⭐ FeelFamous Kudos
+                </a>
+              </div>
+              {isPro && (
+                <div className="mt-4">
+                  <span className="inline-block bg-yellow-500 text-purple-900 px-4 py-2 rounded-full font-bold text-sm">
+                    PRO ACTIVE
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Main Card */}
+            <div className="bg-white rounded-3xl shadow-2xl p-6 md:p-8">
+              
+              {/* Upload Section */}
+              {!imagePreview && !loading && !result && (
+                <div>
+                  <div className="border-4 border-dashed border-purple-300 rounded-2xl p-12 text-center bg-purple-50 hover:bg-purple-100 transition cursor-pointer"
+                       onClick={() => document.getElementById('imageInput').click()}>
+                    <div className="text-6xl mb-4">🎩✨</div>
+                    <p className="text-xl font-bold text-purple-900 mb-2">
+                      Upload a Magic Photo
+                    </p>
+                    <p className="text-purple-700 mb-4">
+                      Card trick, coin magic, illusion prop, or performance shot
+                    </p>
+                    <button className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg transition">
+                      Choose Image
+                    </button>
+                  </div>
+                  <input 
+                    id="imageInput"
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                </div>
+              )}
+
+              {/* Loading State */}
+              {loading && (
+                <div className="text-center py-12">
+                  <div className="pulse-glow text-6xl mb-6">🔮</div>
+                  <h3 className="text-2xl font-bold text-purple-900 mb-4">
+                    Analyzing Magic...
+                  </h3>
+                  <p className="text-purple-700 mb-6">
+                    Consulting 30+ years of magic knowledge...
+                  </p>
+                  <div className="w-full bg-purple-200 rounded-full h-3 mb-2 overflow-hidden">
+                    <div 
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 h-3 rounded-full transition-all duration-500"
+                      style={{ width: `${loadingProgress}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-sm text-purple-600">This takes about 20 seconds...</p>
+                </div>
+              )}
+
+              {/* Preview & Analyze Section */}
+              {imagePreview && !result && !loading && (
+                <div>
+                  <div className="mb-6">
+                    <img src={imagePreview} alt="Preview" className="max-h-96 mx-auto rounded-lg shadow-lg" />
+                  </div>
+
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => analyzeImage(false)}
+                      className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-xl transition-all text-lg"
+                    >
+                      🎩 Identify This Effect (FREE)
+                    </button>
+
+                    {isPro ? (
+                      <button
+                        onClick={() => analyzeImage(true)}
+                        className="w-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-purple-900 font-bold py-4 px-6 rounded-xl transition-all text-lg"
+                      >
+                        ⭐ Pro Analysis (Method + Books + Tips)
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setShowUpgradeModal(true)}
+                        className="w-full bg-gradient-to-r from-purple-100 to-pink-100 hover:from-purple-200 hover:to-pink-200 border-2 border-purple-400 text-purple-900 font-bold py-4 px-6 rounded-xl transition-all text-lg"
+                      >
+                        ⭐ Unlock Pro Features
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => {
+                        setImageFile(null);
+                        setImagePreview(null);
+                      }}
+                      className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg transition"
+                    >
+                      Choose Different Image
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Results Section */}
+              {result && (
+                <div>
+                  <div className="mb-6">
+                    <img src={imagePreview} alt="Analyzed" className="max-h-64 mx-auto rounded-lg shadow-lg" />
+                  </div>
+
+                  <div className={`p-6 rounded-2xl ${result.proMode ? 'bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-400' : 'bg-purple-50 border-2 border-purple-200'}`}>
+                    {result.proMode && (
+                      <div className="mb-4 text-center">
+                        <span className="inline-block bg-yellow-500 text-purple-900 px-4 py-2 rounded-full font-bold text-sm">
+                          ⭐ PRO ANALYSIS - Method Revealed!
+                        </span>
+                      </div>
+                    )}
+                    
+                    <div className="markdown-content prose max-w-none"
+                         dangerouslySetInnerHTML={{ __html: marked.parse(result.analysis) }}>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex gap-3 flex-wrap justify-center">
+                    <button
+                      onClick={() => {
+                        setImageFile(null);
+                        setImagePreview(null);
+                        setResult(null);
+                      }}
+                      className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all flex items-center gap-2"
+                    >
+                      <span>🔄</span>
+                      Identify Another Effect
+                    </button>
+                    
+                    <button
+                      onClick={generateShareImage}
+                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-lg transition-all flex items-center gap-2 transform hover:scale-105"
+                    >
+                      <span>📤</span>
+                      Share Results
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="mt-8 text-center text-purple-200 text-sm">
+              <p className="mb-2">
+                Built by <a href="https://ko-fi.com/zoom" target="_blank" rel="noopener" className="font-bold hover:text-white">Chris P Tee</a> • Magic Circle Magician • 30+ Years Experience
+              </p>
+              <p>
+                Part of the -Oid Family • Respect the art, learn the skills
+              </p>
+            </div>
+          </div>
+
+          {/* Upgrade Modal */}
+          {showUpgradeModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl max-h-[90vh] overflow-y-auto">
+                
+                {/* Header */}
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-black text-gray-800 mb-2">
+                    🎩 Become a Founding Fan
+                  </h2>
+                  <p className="text-gray-600 mb-3">Help build the magic community hub</p>
+                  <div className="bg-purple-50 border-2 border-purple-200 rounded-xl p-3 text-sm text-gray-700">
+                    <p className="font-semibold mb-1">✨ The Vision</p>
+                    <p className="text-xs">Your £4.95/month funds jam sessions, skill shares, online lectures, and a safe space where dealers, teachers, and students protect the art together. Connected through FeelFamous Kudos across all -Oid apps.</p>
+                  </div>
+                </div>
+
+                {/* FREE IS REAL */}
+                <div className="bg-green-50 border-2 border-green-300 rounded-xl p-4 mb-4">
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-green-900 mb-2">✅ FREE Forever Means Forever</p>
+                    <p className="text-xs text-green-800">
+                      Full identification, no tricks, no limits. Magic-Oid free tier is genuinely useful. 
+                      Pro adds methods, books, and performance guidance.
+                    </p>
+                  </div>
+                </div>
+
+                {/* EARLY ADOPTER - Highlighted */}
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-2xl border-2 border-purple-400 mb-4 relative">
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    FOUNDING FAN
+                  </div>
+                  <div className="text-center">
+                    <div className="text-4xl font-black text-purple-900 mb-2">£4.95/month</div>
+                    <div className="text-lg font-bold text-purple-800 mb-3">Early Adopter - Forever</div>
+                    <div className="text-sm text-purple-700 mb-4 leading-relaxed">
+                      🎯 <strong>First 1,000 fans only</strong><br/>
+                      ⭐ Pro on ALL -Oid apps (Magic, Radio, Guitar, more coming)<br/>
+                      🔒 £4.95 locked in FOREVER (never increases)<br/>
+                      🤝 Build the community hub with us<br/>
+                      ✨ FeelFamous Kudos across the network<br/>
+                      🎓 Early access to jam sessions & lectures
+                    </div>
+                    <a
+                      href="https://buy.stripe.com/YOUR_STRIPE_LINK_HERE"
+                      className="block bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black py-4 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg"
+                    >
+                      Join the 1,000 True Fans
+                    </a>
+                    <p className="text-xs text-purple-600 mt-3 font-semibold">
+                      347 of 1,000 spots taken
+                    </p>
+                  </div>
+                </div>
+
+                {/* KEVIN KELLY REFERENCE */}
+                <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 mb-4">
+                  <p className="text-xs text-blue-900 text-center leading-relaxed">
+                    <strong>"1,000 True Fans"</strong> - Kevin Kelly's insight: You don't need millions. 
+                    You need 1,000 people who believe in what you're building. That's us. 
+                    That's this moment. That's £4.95 × 1,000 = jam sessions, lectures, and a thriving magic community.
+                  </p>
+                </div>
+
+                {/* VIRAL FREE PRO - Smaller, less prominent */}
+                <div className="text-center pt-3 border-t border-gray-200">
+                  <p className="text-xs text-gray-500 mb-2">Can't commit yet?</p>
+                  <button
+                    onClick={unlockProForShare}
+                    className="bg-gray-100 hover:bg-gray-200 border-2 border-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg transition text-sm"
+                  >
+                    Try 1 Free Pro Analysis 🎁
+                  </button>
+                  <p className="text-xs text-gray-400 mt-2">
+                    Share results to earn more credits
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => setShowUpgradeModal(false)}
+                  className="mt-4 w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg transition"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.render(<MagicOid />, document.getElementById('root'));
+  </script>
+</body>
+</html>

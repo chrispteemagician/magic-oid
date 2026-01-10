@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome Founder Dealer! - Magic-Oid</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .loading {
+      text-align: center;
+      color: white;
+      padding: 3rem;
+    }
+
+    .loading-icon {
+      font-size: 5rem;
+      margin-bottom: 1rem;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.1); }
+    }
+
+    .success-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .success-icon {
+      font-size: 5rem;
+      margin-bottom: 1rem;
+    }
+
+    .success-header h1 {
+      color: white;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .success-header p {
+      color: #e9d5ff;
+      font-size: 1.25rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 2rem;
+    }
+
+    .card h2 {
+      color: #581c87;
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-section {
+      margin-bottom: 2rem;
+    }
+
+    .info-label {
+      color: #6b7280;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-value {
+      color: #667eea;
+      font-weight: 600;
+      word-break: break-all;
+    }
+
+    .info-value a {
+      color: #667eea;
+      text-decoration: none;
+    }
+
+    .info-value a:hover {
+      text-decoration: underline;
+    }
+
+    .code-box {
+      background: #f3e8ff;
+      border: 2px solid #c084fc;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.875rem;
+      word-break: break-all;
+    }
+
+    .qr-section {
+      border-top: 2px solid #e5e7eb;
+      padding-top: 2rem;
+      margin-top: 2rem;
+    }
+
+    .qr-container {
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .qr-image {
+      flex: 0 0 auto;
+    }
+
+    .qr-image img {
+      width: 250px;
+      height: 250px;
+      border-radius: 0.75rem;
+      border: 4px solid #c084fc;
+      background: white;
+      padding: 0.5rem;
+    }
+
+    .qr-text {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .download-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: all 0.3s;
+    }
+
+    .download-btn:hover {
+      background: #5568d3;
+    }
+
+    .steps-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 2rem;
+    }
+
+    .step {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 3rem;
+      height: 3rem;
+      background: #f3e8ff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #667eea;
+      font-weight: 900;
+      font-size: 1.25rem;
+    }
+
+    .step-content h3 {
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-content p {
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .cta-btn {
+      padding: 1rem 2rem;
+      border-radius: 0.75rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: 2px solid;
+    }
+
+    .primary-cta {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .primary-cta:hover {
+      background: #5568d3;
+      border-color: #5568d3;
+    }
+
+    .secondary-cta {
+      background: white;
+      color: #667eea;
+      border-color: #667eea;
+    }
+
+    .secondary-cta:hover {
+      background: #f9fafb;
+    }
+
+    .error {
+      background: #fee2e2;
+      border: 2px solid #f87171;
+      color: #991b1b;
+      padding: 2rem;
+      border-radius: 1.5rem;
+      text-align: center;
+    }
+
+    .error-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .qr-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .success-header h1 {
+        font-size: 2rem;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Loading State -->
+    <div id="loadingState">
+      <div class="loading">
+        <div class="loading-icon">🪄</div>
+        <h2 style="color: white; margin-bottom: 0.5rem;">Creating your dealer profile...</h2>
+        <p style="color: #e9d5ff;">Just a moment while we set everything up</p>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" style="display: none;">
+      <div class="card error">
+        <div class="error-icon">❌</div>
+        <h2 style="color: #991b1b; margin-bottom: 1rem;">Something went wrong</h2>
+        <p id="errorMessage" style="margin-bottom: 2rem;"></p>
+        <a href="/dealers.html" class="cta-btn primary-cta">Back to Dealers Page</a>
+      </div>
+    </div>
+
+    <!-- Success State -->
+    <div id="successState" style="display: none;">
+      
+      <!-- Header -->
+      <div class="success-header">
+        <div class="success-icon">🎩✨</div>
+        <h1>You're in! Welcome as a Founder Dealer</h1>
+        <p>Your Magic-oid dealer profile is now live</p>
+      </div>
+
+      <!-- Dealer Info Card -->
+      <div class="card">
+        <h2>Your Dealer Details</h2>
+        
+        <div class="info-section">
+          <div class="info-label">Dealer Name</div>
+          <div class="info-value" id="dealerName"></div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-label">Your Dealer Page</div>
+          <div class="info-value">
+            <a href="#" id="pageUrl" target="_blank"></a>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-label">Your Referral Link</div>
+          <div class="code-box" id="referralUrl"></div>
+        </div>
+
+        <!-- QR Code Section -->
+        <div class="qr-section">
+          <h3 style="color: #581c87; margin-bottom: 1.5rem;">Your QR Code</h3>
+          <div class="qr-container">
+            <div class="qr-image">
+              <img id="qrImage" src="" alt="QR Code">
+            </div>
+            <div class="qr-text">
+              <p style="color: #374151; line-height: 1.6; margin-bottom: 1rem;">
+                Print this QR code and display it at your shop counter or till. 
+                When customers scan it, they'll visit your dealer page and you'll earn kudos!
+              </p>
+              <button id="downloadBtn" class="download-btn">
+                📥 Download QR Code
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Next Steps -->
+      <div class="steps-card">
+        <h2 style="color: #581c87; margin-bottom: 2rem;">Your Next Steps</h2>
+
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Share your unique link</h3>
+            <p>Drop your referral link in social bios, newsletters, and at checkout. Every magician who signs up through you boosts your kudos.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Display your QR code</h3>
+            <p>Print and stick your QR by the till or counter so regulars can scan and find you on Magic-oid instantly.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Join the community</h3>
+            <p>Check your email for details on skill-share workshops, Zoom jam sessions, and how to update your weekly deals. Welcome to the Kudos Family!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA Buttons -->
+      <div class="cta-buttons">
+        <a href="#" id="viewPageBtn" class="cta-btn primary-cta" target="_blank">
+          View Your Dealer Page
+        </a>
+        <a href="/" class="cta-btn secondary-cta">
+          Back to Magic-oid
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    async function processDealerSignup() {
+      // Get session ID from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const sessionId = urlParams.get('session_id');
+
+      if (!sessionId) {
+        showError('No session ID found. Please contact support.');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/dealers-process-signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to process signup');
+        }
+
+        // Show success with dealer data
+        showSuccess(data.dealer);
+
+      } catch (error) {
+        showError(error.message);
+      }
+    }
+
+    function showSuccess(dealer) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('successState').style.display = 'block';
+
+      // Fill in dealer info
+      document.getElementById('dealerName').textContent = dealer.dealerName;
+      document.getElementById('pageUrl').textContent = dealer.pageUrl;
+      document.getElementById('pageUrl').href = dealer.pageUrl;
+      document.getElementById('referralUrl').textContent = dealer.referralUrl;
+      document.getElementById('qrImage').src = dealer.qrImageDataUrl;
+      document.getElementById('viewPageBtn').href = dealer.pageUrl;
+
+      // Download button
+      document.getElementById('downloadBtn').addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.href = dealer.qrImageDataUrl;
+        link.download = `magic-oid-qr-${dealer.dealerName.replace(/\s/g, '-')}.png`;
+        link.click();
+      });
+    }
+
+    function showError(message) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('errorState').style.display = 'block';
+      document.getElementById('errorMessage').textContent = message;
+    }
+
+    // Process signup on page load
+    processDealerSignup();
+  </script>
+</body>
+</html>
